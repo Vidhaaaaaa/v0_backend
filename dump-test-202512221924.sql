@@ -43,6 +43,7 @@ CREATE TABLE `match` (
   `court_number` int DEFAULT NULL,
   `court_order` int DEFAULT NULL,
   `status` varchar(20) DEFAULT NULL,
+  `match_outcome` varchar(20) DEFAULT `normal` NOT NULL,
   `predecessor_1` int DEFAULT NULL,
   `predecessor_2` int DEFAULT NULL,
   `successor` int DEFAULT NULL,

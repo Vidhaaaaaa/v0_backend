@@ -86,6 +86,7 @@ class Match(db.Model):
     round_id = db.Column(db.String(50), nullable=False)
     pool = db.Column(db.String(50), nullable=False)
     winner_team_id = db.Column(db.String(50), nullable=True)
+    match_outcome = db.Column(db.String(20), nullable=False, default='normal')  # normal, walkover, future(forfeit, bye etc.)
     is_final = db.Column(db.Boolean, default=False)
     tournament_id = db.Column(db.Integer, db.ForeignKey('tournament.id'), nullable=False)
     court_number = db.Column(db.Integer)
