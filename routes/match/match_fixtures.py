@@ -165,6 +165,7 @@ def get_match_fixtures():
                 },
                 'team1_players': team1_players_str or "TBD",
                 'team2_players': team2_players_str or "TBD",
+                'match_outcome': match.match_outcome,
                 'match_result': match_result,
                 'match_status': {
                     'winner_team_id': match.winner_team_id,
