@@ -2,6 +2,7 @@ from flask import request, jsonify
 from models import Match, Team, Player, Tournament, Score, db, SuperTournament
 from sqlalchemy import or_
 from . import match_bp
+from routes.score.score_core import update_successor_match
 
 @match_bp.route('/create-match', methods=['POST'])
 def create_match():
@@ -296,6 +297,80 @@ def update_match_status(match_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+@match_bp.route('/mark-match-outcome/<int:match_id>', methods=['POST'])
+def mark_match_outcome(match_id):
+    try:
+        data = request.json
+
+        match_outcome = data.get('match_outcome')
+        tournament_id = data.get('tournament_id')
+        winner_team_id = data.get('winner_team_id')
+
+        if not all([match_outcome, tournament_id, winner_team_id]):
+            return jsonify({
+                'error': 'match_outcome, tournament_id and winnter_team_id are required'
+            }), 400
+
+        # Outcomes that immediately finalize a match
+        TERMINAL_OUTCOMES = {'walkover'} # can add forfeit, bye etc. in future
+
+        # All supported outcomes
+        SUPPORTED_OUTCOMES = TERMINAL_OUTCOMES | {'normal'}
+
+        if match_outcome not in SUPPORTED_OUTCOMES:
+            return jsonify({
+                'error': f'Invalid match_outcome. Supported: {", ".join(SUPPORTED_OUTCOMES)}'
+            }), 400
+
+        match = Match.query.filter_by(
+            id=match_id,
+            tournament_id=tournament_id
+        ).first()
+
+        if not match:
+            return jsonify({'error': 'Match not found'}), 404
+
+        # Set outcome
+        match.match_outcome = match_outcome
+
+        # Terminal outcomes immediately finalize the match
+        if match_outcome in TERMINAL_OUTCOMES:
+            if not winner_team_id:
+                return jsonify({
+                    'error': f'winner_team_id is required for {match_outcome}'
+                }), 400
+
+            match.status = 'completed'
+            match.is_final = True
+            match.winner_team_id = winner_team_id
+
+            # Advance successor if exists
+            if match.successor:
+                update_successor_match(
+                    match.successor,
+                    match.id,
+                    winner_team_id
+                )
+
+        # normal outcome → scoring flow will handle finalization
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Match outcome updated successfully',
+            'match': {
+                'id': match.id,
+                'match_outcome': match.match_outcome,
+                'status': match.status,
+                'is_final': match.is_final,
+                'winner_team_id': match.winner_team_id
+            }
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
 
 def verify_player_checkins(match):
     """Helper function to verify all players are checked in"""
