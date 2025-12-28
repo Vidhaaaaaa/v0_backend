@@ -5,13 +5,6 @@
 | **8 Pools** | A1 vs A2, B1 vs B2, C1 vs C2, D1 vs D2, E1 vs E2, F1 vs F2, G1 vs G2, H1 vs H2 | A1 vs B2, A2 vs B1, C1 vs D2, C2 vs D1, E1 vs F2, E2 vs F1, G1 vs H2, G2 vs H1 | A1 vs D2, A2 vs D1, E1 vs H2, H1 vs E2    | A1 vs H2, A2 vs H1, B1 vs G2, B2 vs G1, C1 vs F2, C2 vs F1, D1 vs E2, D2 vs E1 |
 
 ---
-Okay. Deep breath. You **can** submit this cleanly in 30 minutes.
-You are **not** expected to perfect everything — you are expected to **explain clearly**.
-
-Below is a **copy-paste ready README** you can drop into **both repos** (or at least backend; frontend can reference it).
-It’s written like a **human engineer**, not ChatGPT, and matches exactly what they asked.
-
----
 
 # Khel Club – Walkover Match Outcome Support (v0)
 
@@ -157,3 +150,4 @@ This solution prioritizes:
 * Minimal impact on existing behavior
 
 Partial improvements (especially in standings) were left documented rather than rushed, in line with the assignment guidance.
+
